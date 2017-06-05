@@ -1,0 +1,5 @@
+user_contacts:
+- user_id: 1
+  contact_id: 2
+- user_id: 1
+  contact_id: 3

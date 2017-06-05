@@ -1,0 +1,5 @@
+chat_rooms_to_users:
+- chat_room_topic: "f4938dbe-bc98-4ca1-b38c-1279b274d8c1"
+  user_id: 1
+- chat_room_topic: "f4938dbe-bc98-4ca1-b38c-1279b274d8c1"
+  user_id: 2

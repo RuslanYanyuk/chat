@@ -1,0 +1,18 @@
+<!-- turns off logging -->
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework.web" level="error" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="ch.qos.logback." level="error" additivity="false">
+        <appender-ref ref="STDOUT" />
+    </logger>
+</configuration>

@@ -1,11 +1,13 @@
 package com.chat.services;
 
+import com.chat.exceptions.AccessDeniedException;
+import com.chat.models.ChatRoom;
 import com.chat.models.Message;
-import com.chat.models.Response;
-import com.chat.models.ResponseType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author Ruslan Yaniuk
@@ -14,11 +16,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class MessageService {
 
-    @Autowired
-    KafkaTemplate<String, String> kafkaTemplate;
+    public static final String NOT_PARTICIPANT = "User is not participant of the chat room";
 
-    public Response sendMessage(Message msg) {
-        kafkaTemplate.send(msg.getChatRoom().getTopic(), msg.getSender().getId(), msg.getData());
-        return new Response(ResponseType.SUCCESS);
+    @Autowired
+    KafkaTemplate<Long, String> kafkaTemplate;
+
+    @Autowired
+    UserService userService;
+
+    public void sendMessage(Message msg) throws AccessDeniedException {
+        List<ChatRoom> chatRooms = userService.getChatRooms(msg.getSender());
+        ChatRoom chatRoom = new ChatRoom(msg.getChatRoom().getTopic());
+
+        if (!chatRooms.contains(chatRoom)) {
+            throw new AccessDeniedException(NOT_PARTICIPANT);
+        }
+        kafkaTemplate.send(chatRoom.getTopic(), msg.getSender().getId(), msg.getData());
     }
 }
