@@ -1,5 +1,6 @@
 package com.chat.config;
 
+import com.chat.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -19,6 +20,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final String ALL_SUBDIR_MATCHER = "/**";
     public static final String LOGIN_PAGE = "/login";
+
+    @Autowired
+    UserService userService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -43,8 +47,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .inMemoryAuthentication()
-                .withUser("user1").password("password").roles("USER");
+        auth.userDetailsService(userService);
     }
 }

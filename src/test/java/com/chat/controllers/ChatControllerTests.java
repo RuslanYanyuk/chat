@@ -171,7 +171,6 @@ public class ChatControllerTests extends AbstractKafkaTest {
                 throw new RuntimeException(e);
             }
         }
-
     }
 
     private WebSocketHttpHeaders loginUser(User user) {

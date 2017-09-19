@@ -31,20 +31,20 @@ public class ChatController {
     @MessageMapping("/message/{room}")
     public void sendMessage(Message message, @DestinationVariable String room, Principal principal) throws AccessDeniedException {
         message.setChatRoom(new ChatRoom(room));
-        message.setSender(new User(principal.getName()));
+        message.setSender(new User(principal.getName(), null));
         messageService.sendMessage(message);
     }
 
     @MessageMapping("/chat-rooms")
     @SendToUser("/topic/chat-rooms")
     public List<ChatRoom> getChatRooms(Principal principal) {
-        return userService.getChatRooms(new User(principal.getName()));
+        return userService.getChatRooms(new User(principal.getName(), null));
     }
 
     @MessageMapping("/create-chat-room")
     @SendToUser("/topic/chat-rooms")
     public List<ChatRoom> createChatRooms(User[] participants, Principal principal) throws AccessDeniedException {
-        User user = new User(principal.getName());
+        User user = new User(principal.getName(), null);
 
         userService.addChatRoom(user, participants);
         return userService.getChatRooms(user);
@@ -53,6 +53,6 @@ public class ChatController {
     @MessageMapping("/get-contacts")
     @SendToUser("/topic/contacts")
     public List<User> getContacts(Principal principal) throws AccessDeniedException {
-        return userService.getContacts(new User(principal.getName()));
+        return userService.getContacts(new User(principal.getName(), null));
     }
 }

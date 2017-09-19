@@ -8,6 +8,9 @@ import com.chat.repositories.UserRepository;
 import com.chat.utils.KafkaAdminUtils;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,7 +22,7 @@ import java.util.UUID;
  * @date May 2017
  */
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     public static final String USER_IS_NOT_CONTACT = "User is not from the contacts list";
 
@@ -70,8 +73,21 @@ public class UserService {
 
     @Transactional
     public List<User> getContacts(User user) {
-        user = userRepository.findByName(user.getName());
+        user = findUser(user.getName());
         Hibernate.initialize(user.getContacts());
         return user.getContacts();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return new User(findUser(username));
+    }
+
+    private User findUser(String username) {
+        User userDetails = userRepository.findByName(username);
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("Can't find the user of the specified name");
+        }
+        return userDetails;
     }
 }

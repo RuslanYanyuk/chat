@@ -6,12 +6,15 @@ import com.chat.models.ChatRoom;
 import com.chat.models.User;
 import com.chat.repositories.ChatRoomRepository;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -96,5 +99,17 @@ public class UserServiceTests extends AbstractKafkaTest {
         List<User> contacts = userService.getContacts(getUser(1));
 
         assertThat(contacts, containsInAnyOrder(getUser(2), getUser(3)));
+    }
+
+    @Test
+    public void loadUserByUsername_correctName_userDetailsReturned() {
+        UserDetails userDetails = userService.loadUserByUsername(getUser(1).getName());
+
+        Assert.assertThat(userDetails.getUsername(), is(getUser(1).getName()));
+    }
+
+    @Test(expected = UsernameNotFoundException.class)
+    public void loadUserByUsername_incorrectUsername_ExceptionThrown() {
+        userService.loadUserByUsername("nonExistentUserName");
     }
 }

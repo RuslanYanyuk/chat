@@ -8,8 +8,9 @@ CREATE TABLE chat_room (
   PRIMARY KEY (topic)
 );
 CREATE TABLE user (
-  id   BIGINT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(255),
+  id       BIGINT NOT NULL AUTO_INCREMENT,
+  name     VARCHAR(255),
+  password VARCHAR(255),
   PRIMARY KEY (id)
 );
 CREATE TABLE user_contacts (

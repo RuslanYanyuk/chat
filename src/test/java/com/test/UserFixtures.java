@@ -9,7 +9,7 @@ import com.chat.models.User;
 public class UserFixtures {
 
     public static User getUser(int i) {
-        User u = new User("user" + i);
+        User u = new User("user" + i, "password");
         u.setId((long) i);
         return u;
     }
