@@ -35,6 +35,10 @@ public class UserService implements UserDetailsService {
     @Autowired
     KafkaAdminUtils kafkaAdminUtils;
 
+    public User add(User user) {
+        return userRepository.save(user);
+    }
+
     @Transactional
     public List<ChatRoom> getChatRooms(User user) {
         user = userRepository.findByName(user.getName());
