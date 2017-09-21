@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class AuthController {
 
+    public static final String REDIRECT_SIGN_UP_ERROR = "redirect:/sign-up?error";
+    public static final String REDIRECT_HOME = "redirect:/";
+
     @Autowired
     UserService userService;
 
@@ -29,23 +32,23 @@ public class AuthController {
     @Autowired
     SecurityService securityService;
 
-    @RequestMapping(value = "/registration", method = RequestMethod.GET)
+    @RequestMapping(value = "/sign-up", method = RequestMethod.GET)
     public String getRegistrationPage(@RequestParam(value = "error", required = false) String error, Model model) {
         model.addAttribute("userForm", new User());
         if (error != null) {
             model.addAttribute("error", "Your username or password is invalid.");
         }
-        return "registration";
+        return "sign-up";
     }
 
-    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
     public String registerUser(@ModelAttribute("userForm") User userForm, BindingResult bindingResult) {
         userValidator.validate(userForm, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "redirect:/registration?error";
+            return REDIRECT_SIGN_UP_ERROR;
         }
         userService.add(userForm);
         securityService.autoLogin(userForm.getUsername(), userForm.getPassword());
-        return "redirect:/";
+        return REDIRECT_HOME;
     }
 }

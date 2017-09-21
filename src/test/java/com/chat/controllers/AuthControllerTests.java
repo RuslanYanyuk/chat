@@ -11,6 +11,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.chat.config.WebSecurityConfig.SIGN_UP_PAGE;
+import static com.chat.controllers.AuthController.REDIRECT_HOME;
+import static com.chat.controllers.AuthController.REDIRECT_SIGN_UP_ERROR;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,32 +47,32 @@ public class AuthControllerTests extends AbstractKafkaTest {
 
     @Test
     public void getRegistrationPage() throws Exception {
-        mockMvc.perform(get("/registration"))
+        mockMvc.perform(get(SIGN_UP_PAGE))
                 .andExpect(status().isOk())
-                .andExpect(view().name("registration"));
+                .andExpect(view().name("sign-up"));
     }
 
     @Test
     public void registerUser_correctDetails_userRegisteredAndLoggedIn() throws Exception {
-        mockMvc.perform(post("/registration")
+        mockMvc.perform(post(SIGN_UP_PAGE)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .content("name=user10&password=password"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/"));
+                .andExpect(view().name(REDIRECT_HOME));
     }
 
     @Test
     public void registerUser_inCorrectDetails_registrationFails() throws Exception {
-        mockMvc.perform(post("/registration")
+        mockMvc.perform(post(SIGN_UP_PAGE)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .content("name=us&password=pa"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/registration?error"));
+                .andExpect(view().name(REDIRECT_SIGN_UP_ERROR));
 
-        mockMvc.perform(post("/registration")
+        mockMvc.perform(post(SIGN_UP_PAGE)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .content("name=user1&password=password"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/registration?error"));
+                .andExpect(view().name(REDIRECT_SIGN_UP_ERROR));
     }
 }

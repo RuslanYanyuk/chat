@@ -1,0 +1,12 @@
+{
+  "author": "Ruslan Yanyuk <ruslan.yanyuk@Gmail.com>",
+
+  "devDependencies": {
+    "connect": "",
+    "serve-static": "",
+    "proxy-middleware": "0.14.0",
+    "url": "",
+    "node-sass": "",
+    "fs": ""
+  }
+}

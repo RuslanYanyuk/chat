@@ -1,0 +1,61 @@
+<!doctype html>
+<html class="no-js" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+  <head>
+    <title>Sign Up</title>
+    <meta charset="utf-8"/>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" href="assets/css/normalize.css"/>
+    <link rel="stylesheet" href="assets/css/main.css"/>
+  </head>
+
+  <body>
+
+    <div class="sign-up-page">
+      <div class="sign-up-form">
+        <div class="form-head">
+          <h1><span>Web</span>Chat</h1>
+
+          <p>Create a new account</p>
+        </div>
+
+        <form th:action="@{/sign-up}" method="POST" th:object="${userForm}">
+          <div class="form-row">
+            <input type="text" class="form-control" placeholder="Name" th:field="*{name}" autofocus="true"/>
+          </div>
+
+          <div class="form-row">
+            <input type="email" class="form-control" placeholder="Email"/>
+          </div>
+
+          <div class="form-row pass-row">
+            <i></i>
+
+            <input type="password" class="form-control" placeholder="Password" th:field="*{password}"/>
+          </div>
+
+          <div class="form-row pass-row">
+            <i></i>
+
+            <input type="password" class="form-control" placeholder="Retype Password"/>
+          </div>
+
+          <div class="privacy-terms">
+            <input type="checkbox" id="save_info"/>
+
+            <label for="save_info">By clicking Sign Up, You agree with our</label>
+
+            <a href="#" class="form-link">Terms</a>
+          </div>
+
+          <button class="form-submit" type="submit">Sign Up</button>
+        </form>
+
+        <p>Already have an account? <a th:href="@{/sign-in}" class="form-link">Sign In</a></p>
+      </div>
+    </div>
+
+  </body>
+</html>

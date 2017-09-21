@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
@@ -19,16 +20,25 @@ import static com.chat.config.WebSocketConfig.*;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final String ALL_SUBDIR_MATCHER = "/**";
-    public static final String LOGIN_PAGE = "/login";
+    public static final String SIGN_IN_PAGE = "/sign-in";
+    public static final String SIGN_UP_PAGE = "/sign-up";
 
     @Autowired
     UserService userService;
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+                .ignoring()
+                .antMatchers("/assets/**");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/registration" + ALL_SUBDIR_MATCHER).permitAll()
+                .antMatchers(SIGN_UP_PAGE)
+                .permitAll()
                 .antMatchers(
                         "/",
                         "/user" + ALL_SUBDIR_MATCHER,
@@ -38,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage(LOGIN_PAGE)
+                .loginPage(SIGN_IN_PAGE)
                 .permitAll()
                 .and()
                 .logout()

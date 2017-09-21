@@ -1,0 +1,6 @@
+Frontend dev server.
+
+1. Install dependencies by running command 'npm install'
+2. Than run 'node server.js'
+
+Server available at 'localhost:9000'

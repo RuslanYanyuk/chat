@@ -1,0 +1,15 @@
+.display-block {display: block;}
+
+.overflow-hidden {
+	overflow: hidden;
+}
+
+.link-to {
+  position: absolute;
+	@include size(100%);
+  z-index: 10;
+  display: block;
+  top:0;
+  left: 0;
+}
+

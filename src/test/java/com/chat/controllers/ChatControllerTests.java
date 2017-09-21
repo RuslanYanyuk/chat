@@ -184,7 +184,7 @@ public class ChatControllerTests extends AbstractKafkaTest {
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         httpHeaders = restTemplate
-                .postForEntity("http://localhost:" + randomServerPort + WebSecurityConfig.LOGIN_PAGE,
+                .postForEntity("http://localhost:" + randomServerPort + WebSecurityConfig.SIGN_IN_PAGE,
                         new HttpEntity<>(map, httpHeaders), Object.class)
                 .getHeaders();
         wsHeaders.add(HttpHeaders.COOKIE, httpHeaders.getFirst(HttpHeaders.SET_COOKIE));
