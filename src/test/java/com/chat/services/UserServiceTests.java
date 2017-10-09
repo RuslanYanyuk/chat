@@ -5,6 +5,7 @@ import com.chat.exceptions.AccessDeniedException;
 import com.chat.models.ChatRoom;
 import com.chat.models.User;
 import com.chat.repositories.ChatRoomRepository;
+import com.test.UserFixtures;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,8 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 import static com.test.MessageFixtures.getTestMessage;
-import static com.test.UserFixtures.getArrayOfUsers;
-import static com.test.UserFixtures.getUser;
+import static com.test.UserFixtures.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertNotNull;
@@ -111,5 +111,42 @@ public class UserServiceTests extends AbstractKafkaTest {
     @Test(expected = UsernameNotFoundException.class)
     public void loadUserByUsername_incorrectUsername_ExceptionThrown() {
         userService.loadUserByUsername("nonExistentUserName");
+    }
+
+    @Test
+    public void findUserByName_correctName_userReturned() {
+        List<User> users = userService.findUserByName(getUser(1).getName());
+        assertThat(users, hasSize(1));
+        assertThat(users, hasItem(getUser(1)));
+    }
+
+    @Test
+    public void findUserByName_namePrefix_listOfUsersReturned() {
+        List<User> users = userService.findUserByName(UserFixtures.NAME_PREFIX);
+        assertThat(users, hasSize(4));
+        assertThat(users, hasItems(getArrayOfUsers(1, 2, 3, 4)));
+    }
+
+    @Test
+    public void addContact_correctUsername_contactAddedChatRoomCreated() throws AccessDeniedException {
+        List<User> contacts = userService.addContact(getUser(1), getUser(4));
+
+        Assert.assertThat(contacts, hasItem(getUser(3)));
+        Assert.assertThat(contacts, hasItem(getUser(4)));
+    }
+
+    @Test
+    public void addContact_sameNameOrContactAlreadyAdded_contactsReturned() throws AccessDeniedException {
+        List<User> contacts = userService.addContact(getUser(1), getUser(1));
+
+        Assert.assertThat(contacts, hasSize(2));
+
+        contacts = userService.addContact(getUser(1), getUser(2));
+        Assert.assertThat(contacts, hasSize(2));
+    }
+
+    @Test(expected = UsernameNotFoundException.class)
+    public void addContact_nonExistingUsername_exceptionThrown() throws AccessDeniedException {
+        userService.addContact(getNonExistingUser(), getNonExistingUser());
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class ChatController {
         messageService.sendMessage(message);
     }
 
-    @MessageMapping("/chat-rooms")
+    @MessageMapping("/get-chat-rooms")
     @SendToUser("/topic/chat-rooms")
     public List<ChatRoom> getChatRooms(Principal principal) {
         return userService.getChatRooms(new User(principal.getName(), null));
@@ -54,5 +55,20 @@ public class ChatController {
     @SendToUser("/topic/contacts")
     public List<User> getContacts(Principal principal) throws AccessDeniedException {
         return userService.getContacts(new User(principal.getName(), null));
+    }
+
+    @MessageMapping("/find-users")
+    @SendToUser("/topic/found-users")
+    public List<User> findUsers(User user) throws AccessDeniedException {
+        if (user.getName() == null || user.getName().isEmpty()) {
+            return new ArrayList<>();
+        }
+        return userService.findUserByName(user.getUsername());
+    }
+
+    @MessageMapping("/add-contact")
+    @SendToUser("/topic/contacts")
+    public List<User> addContact(User user, Principal principal) throws AccessDeniedException {
+        return userService.addContact(new User(principal.getName(), null), user);
     }
 }

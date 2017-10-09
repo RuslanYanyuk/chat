@@ -31,7 +31,8 @@ app.use(function barMiddleware(req, response, next) {
         next();
         return
     }
-    if (req.url.startsWith('/assets')) {
+    next();
+    /*if (req.url.startsWith('/assets')) {
         next();
         return
     }
@@ -49,7 +50,7 @@ app.use(function barMiddleware(req, response, next) {
             break;
         default :
             respondWithPage(response, 'main');
-    }
+    }*/
 });
 
 app.use(serveStatic("../../templates/"), {index: false}).listen(PORT, function () {

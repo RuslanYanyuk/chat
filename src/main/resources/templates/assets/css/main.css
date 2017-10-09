@@ -288,7 +288,11 @@ body {
       border: 0;
       outline: 0;
       cursor: pointer; }
-    .contacts-col .contacts-head .form-control {
+    .contacts-col .contacts-head input[type="search"] {
+      -webkit-appearance: searchfield; }
+    .contacts-col .contacts-head input[type="search"]::-webkit-search-cancel-button {
+      -webkit-appearance: searchfield-cancel-button; }
+    .contacts-col .contacts-head .search-form-control {
       display: block;
       width: 100%;
       border-radius: 20px;
@@ -299,7 +303,7 @@ body {
       background-color: #363d45;
       outline: 0;
       color: #fff; }
-      .contacts-col .contacts-head .form-control:focus {
+      .contacts-col .contacts-head .search-form-control:focus {
         border: 1px solid #0084ff; }
   .contacts-col .head-top {
     border-bottom: 1px solid #3f454b;
@@ -1108,3 +1112,6 @@ body {
 
 .messages-container::-webkit-scrollbar-thumb {
   background-color: #2263b0; }
+
+.selected {
+  background-color: #7ab2ff !important; }

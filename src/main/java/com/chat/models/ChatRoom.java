@@ -1,7 +1,5 @@
 package com.chat.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,6 @@ public class ChatRoom {
     @Column(length = 191, unique = true)
     private String topic;
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "chat_rooms_to_users",
             joinColumns = @JoinColumn(name = "chat_room_topic", referencedColumnName = "topic"),

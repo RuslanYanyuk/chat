@@ -8,11 +8,13 @@
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
+    <link rel="stylesheet" href="assets/css/bootstrap.3.3.7.min.css"/>
     <link rel="stylesheet" href="assets/css/main.css"/>
 
     <script src="assets/js/sockjs-client.1.1.2.min.js"></script>
     <script src="assets/js/stomp-websocket-2.3.3-1.min.js"></script>
     <script src="assets/js/angular.1.6.4.min.js"></script>
+    <script src="assets/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
     <script src="assets/js/app.js"></script>
   </head>
 
@@ -21,7 +23,7 @@
       <div class="contacts-col">
         <div class="contacts-head">
           <div class="head-top">
-            <button class="add-user"></button>
+            <button ng-click="openModalAddContact()" class="add-user"></button>
             <form style="display: inline-block" th:action="@{/logout}" method="post">
               <input class="log-out" type="submit" value=""/>
             </form>
@@ -30,19 +32,19 @@
           <div class="search-form">
             <form>
               <button class="form-submit"></button>
-              <input type="search" placeholder="Search" class="form-control"/>
+              <input ng-model="nameFilter" type="search" placeholder="Search" class="search-form-control"/>
             </form>
           </div>
         </div>
 
         <div class="contacts-body">
-          <div class="contact-item"  ng-repeat="contact in contacts">
+          <div class="contact-item" ng-repeat="chatRoom in data.chatRooms | filter: {participant: {name: nameFilter}}">
             <span class="user-status active"></span>
 
             <div class="user-icon" style="background-image: url(assets/img/user-1.jpg);"></div>
 
             <div class="user-info">
-              <div class="user-name">{{contact.name}}</div>
+              <div class="user-name">{{chatRoom.participant.name}}</div>
 
               <div class="last-message">Thanks again you have been fucked</div>
 

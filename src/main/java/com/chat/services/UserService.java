@@ -39,22 +39,30 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    /**
+     * Avoid circular references
+     */
     @Transactional
     public List<ChatRoom> getChatRooms(User user) {
-        user = userRepository.findByName(user.getName());
+        user = findUser(user.getName());
         Hibernate.initialize(user.getChatRooms());
-        return user.getChatRooms();
+        List<ChatRoom> chatRooms = user.getChatRooms();
+        chatRooms.forEach(chatRoom -> Hibernate.initialize(chatRoom.getParticipants()));
+        chatRooms.forEach(chatRoom ->
+                        chatRoom.getParticipants().forEach(u -> u.setChatRooms(null))
+        );
+        return chatRooms;
     }
 
     @Transactional
-    public ChatRoom addChatRoom(User owner, User[] participants) throws AccessDeniedException {
+    public ChatRoom addChatRoom(User owner, User... participants) throws AccessDeniedException {
         ChatRoom chatRoom = new ChatRoom(UUID.randomUUID().toString());
 
-        owner = userRepository.findByName(owner.getName());
+        owner = findUser(owner.getName());
         Hibernate.initialize(owner.getContacts());
         chatRoom.addParticipant(owner);
         for (User u : participants) {
-            u = userRepository.findByName(u.getName());
+            u = findUser(u.getName());
             if (!owner.getContacts().contains(u)) {
                 throw new AccessDeniedException(USER_IS_NOT_CONTACT);
             }
@@ -82,16 +90,40 @@ public class UserService implements UserDetailsService {
         return user.getContacts();
     }
 
+    @Transactional
+    public List<User> addContact(User owner, User contact) throws AccessDeniedException {
+        if (owner.getName().equals(contact.getName())) {
+            return getContacts(owner);
+        }
+        owner = findUser(owner.getName());
+        contact = findUser(contact.getName());
+        Hibernate.initialize(owner.getContacts());
+        if (owner.getContacts().contains(contact)) {
+            return owner.getContacts();
+        }
+        Hibernate.initialize(contact.getContacts());
+        owner.getContacts().add(contact);
+        contact.getContacts().add(owner);
+        userRepository.save(owner);
+        userRepository.save(contact);
+        addChatRoom(owner, contact);
+        return owner.getContacts();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return new User(findUser(username));
     }
 
+    public List<User> findUserByName(String usernamePrefix) {
+        return userRepository.findByNameStartingWithOrderByNameAsc(usernamePrefix);
+    }
+
     private User findUser(String username) {
-        User userDetails = userRepository.findByName(username);
-        if (userDetails == null) {
+        List<User> users = userRepository.findByName(username);
+        if (users.isEmpty() || users.size() > 1) {
             throw new UsernameNotFoundException("Can't find the user of the specified name");
         }
-        return userDetails;
+        return users.get(0);
     }
 }

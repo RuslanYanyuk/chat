@@ -298,7 +298,14 @@ body {
       cursor: pointer;
     }
 
-    .form-control {
+    input[type="search"] {
+      -webkit-appearance: searchfield;
+    }
+    input[type="search"]::-webkit-search-cancel-button {
+      -webkit-appearance: searchfield-cancel-button;
+    }
+
+    .search-form-control {
       display: block;
       width: 100%;
       border-radius: 20px;
@@ -1370,4 +1377,7 @@ body {
   background-color: #2263b0;
 }
 
-
+.selected
+{
+  background-color: #7ab2ff !important;
+}

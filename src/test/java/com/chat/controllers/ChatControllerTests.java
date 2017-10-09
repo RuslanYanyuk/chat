@@ -7,6 +7,7 @@ import com.chat.models.Message;
 import com.chat.models.User;
 import com.chat.services.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.test.UserFixtures;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,7 @@ import static com.test.UserFixtures.getArrayOfUsers;
 import static com.test.UserFixtures.getUser;
 import static java.util.Collections.singletonList;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -70,8 +72,6 @@ public class ChatControllerTests extends AbstractKafkaTest {
                 .insertUserContacts()
                 .insertChatRooms()
                 .insertChatRoomsToUsers();
-
-        messageHandler = new DefaultStompFrameHandler();
 
         session = createStompSession(loginUser(getUser(1)));
     }
@@ -113,7 +113,7 @@ public class ChatControllerTests extends AbstractKafkaTest {
     @Test
     public void getChatRooms_listReturned() {
         subscribeUserTo("/chat-rooms");
-        send("/chat-rooms", null);
+        send("/get-chat-rooms", null);
 
         with(response()).assertThat("$.[*].topic", hasSize(1));
     }
@@ -138,6 +138,34 @@ public class ChatControllerTests extends AbstractKafkaTest {
         with(response()).assertThat("$.message", is(UserService.USER_IS_NOT_CONTACT));
     }
 
+    @Test
+    public void findUsers_correctUserNamePrefix_userListReturned() {
+        User user = new User(UserFixtures.NAME_PREFIX, null);
+
+        subscribeUserTo("/found-users");
+        send("/find-users", user);
+
+        with(response()).assertThat("$.[*].id", hasSize(4));
+        with(response()).assertThat("$.[*].id", hasItems(1, 2, 3, 4));
+    }
+
+    @Test
+    public void findUsers_emptyPrefix_nothingReturned() {
+        subscribeUserTo("/found-users");
+        send("/find-users", new User());
+
+        with(response()).assertThat("$.[*].id", hasSize(0));
+    }
+
+    @Test
+    public void addContact_correctContactUsername_contactAdded() {
+        subscribeUserTo("/contacts");
+        send("/add-contact", getUser(4));
+
+        with(response()).assertThat("$.[*].name", hasSize(3));
+        with(response()).assertThat("$.[*].id", hasItems(2, 3, 4));
+    }
+
     class TestStompSessionHandlerAdapter extends StompSessionHandlerAdapter {
         @Override
         public void afterConnected(StompSession session, StompHeaders connectedHeaders) {
@@ -147,6 +175,7 @@ public class ChatControllerTests extends AbstractKafkaTest {
     class DefaultStompFrameHandler implements StompFrameHandler {
 
         private BlockingQueue<byte[]> blockingQueue;
+        private String cache;
 
         public DefaultStompFrameHandler() {
             blockingQueue = new LinkedBlockingDeque<>();
@@ -164,9 +193,10 @@ public class ChatControllerTests extends AbstractKafkaTest {
 
         public String getMessage() {
             byte[] data;
+            if (cache != null) return cache;
             try {
                 data = blockingQueue.poll(4, SECONDS);
-                return new String(data);
+                return cache = new String(data);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -214,10 +244,12 @@ public class ChatControllerTests extends AbstractKafkaTest {
     }
 
     private void subscribeUserTo(String path) {
+        messageHandler = new DefaultStompFrameHandler();
         session.subscribe("/user/topic" + path, messageHandler);
     }
 
     private StompSession.Subscription subscribe(String path) {
+        messageHandler = new DefaultStompFrameHandler();
         return session.subscribe(BROKER_PREFIX + path, messageHandler);
     }
 

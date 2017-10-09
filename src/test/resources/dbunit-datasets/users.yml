@@ -11,3 +11,6 @@ user:
 - id: 4
   name: user4
   password: password
+- id: 5
+  name: simpleName5
+  password: password

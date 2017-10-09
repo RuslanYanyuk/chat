@@ -142,8 +142,6 @@ public class User implements UserDetails {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", chatRooms=" + chatRooms +
-                ", contacts=" + contacts +
                 '}';
     }
 }

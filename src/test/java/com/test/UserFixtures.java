@@ -8,8 +8,10 @@ import com.chat.models.User;
  */
 public class UserFixtures {
 
+    public static final String NAME_PREFIX = "user";
+
     public static User getUser(int i) {
-        User u = new User("user" + i, "password");
+        User u = new User(NAME_PREFIX + i, "password");
         u.setId((long) i);
         return u;
     }
@@ -21,5 +23,9 @@ public class UserFixtures {
             users[i] = getUser(n[i]);
         }
         return users;
+    }
+
+    public static User getNonExistingUser() {
+        return new User("nonExistingName", null);
     }
 }
