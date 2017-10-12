@@ -1,2 +1,3 @@
 chat_room:
-- topic: "f4938dbe-bc98-4ca1-b38c-1279b274d8c1"
+- id: 1
+  topic: "f4938dbe-bc98-4ca1-b38c-1279b274d8c1"

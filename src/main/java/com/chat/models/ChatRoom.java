@@ -11,16 +11,15 @@ import java.util.List;
 @Entity
 public class ChatRoom {
 
-    /**
-     * Length 191 reflects the maximum length of the key in MySQL
-     */
     @Id
-    @Column(length = 191, unique = true)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String topic;
 
     @ManyToMany
     @JoinTable(name = "chat_rooms_to_users",
-            joinColumns = @JoinColumn(name = "chat_room_topic", referencedColumnName = "topic"),
+            joinColumns = @JoinColumn(name = "chat_room_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     private List<User> participants = new ArrayList<>();
 
@@ -29,6 +28,14 @@ public class ChatRoom {
 
     public ChatRoom(String topic) {
         this.topic = topic;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTopic() {
@@ -69,7 +76,8 @@ public class ChatRoom {
     @Override
     public String toString() {
         return "ChatRoom{" +
-                "topic='" + topic + '\'' +
+                "id=" + id +
+                ", topic='" + topic + '\'' +
                 ", participants=" + participants +
                 '}';
     }
