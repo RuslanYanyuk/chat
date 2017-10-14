@@ -2,234 +2,107 @@
 <html class="no-js"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="utf-8"/>
-    <title>Web chat</title>
-    <meta name="description" content=""/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<head>
+  <meta charset="utf-8"/>
+  <title>Web chat</title>
+  <meta name="description" content=""/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <link rel="stylesheet" href="assets/css/bootstrap.3.3.7.min.css"/>
-    <link rel="stylesheet" href="assets/css/main.css"/>
+  <link rel="stylesheet" href="assets/css/bootstrap.3.3.7.min.css"/>
+  <link rel="stylesheet" href="assets/css/main.css"/>
 
-    <script src="assets/js/sockjs-client.1.1.2.min.js"></script>
-    <script src="assets/js/stomp-websocket-2.3.3-1.min.js"></script>
-    <script src="assets/js/angular.1.6.4.min.js"></script>
-    <script src="assets/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
-    <script src="assets/js/app.js"></script>
-  </head>
+  <script src="assets/js/sockjs-client.1.1.2.min.js"></script>
+  <script src="assets/js/stomp-websocket-2.3.3-1.min.js"></script>
+  <script src="assets/js/angular.1.6.4.min.js"></script>
+  <script src="assets/js/ui-bootstrap-tpls-2.5.0.min.js"></script>
+  <script src="assets/js/app.js"></script>
+</head>
 
-  <body ng-app="webChat">
-    <div class="chat-container laptop-container" ng-controller="ChatController">
-      <div class="contacts-col">
-        <div class="contacts-head">
-          <div class="head-top">
-            <button ng-click="openModalAddContact()" class="add-user"></button>
-            <form style="display: inline-block" th:action="@{/logout}" method="post">
-              <input class="log-out" type="submit" value=""/>
-            </form>
-          </div>
-
-          <div class="search-form">
-            <form>
-              <button class="form-submit"></button>
-              <input ng-model="nameFilter" type="search" placeholder="Search" class="search-form-control"/>
-            </form>
-          </div>
-        </div>
-
-        <div class="contacts-body">
-          <div class="contact-item" ng-repeat="chatRoom in data.chatRooms | filter: {participant: {name: nameFilter}}">
-            <span class="user-status active"></span>
-
-            <div class="user-icon" style="background-image: url(assets/img/user-1.jpg);"></div>
-
-            <div class="user-info">
-              <div class="user-name">{{chatRoom.participant.name}}</div>
-
-              <div class="last-message">Thanks again you have been fucked</div>
-
-              <div class="dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-
-              <div class="last-seen">
-                <span>10 min</span>
-              </div>
-            </div>
-          </div>
-        </div>
+<body ng-app="webChat">
+<div class="chat-container laptop-container" ng-controller="ChatController">
+  <div class="contacts-col">
+    <div class="contacts-head">
+      <div class="head-top">
+        <button ng-click="openModalAddContact()" class="add-user"></button>
+        <form style="display: inline-block" th:action="@{/logout}" method="post">
+          <input class="log-out" type="submit" value=""/>
+        </form>
       </div>
 
-      <div class="messages-view">
-        <div class="messages-head">
+      <div class="search-form">
+        <form>
+          <button class="form-submit"></button>
+          <input ng-model="nameFilter" type="search" placeholder="Search" class="search-form-control"/>
+        </form>
+      </div>
+    </div>
 
-          <div class="typing-text">
-            <p><span>Kirsten Mckellar</span> is typing...</p>
-          </div>
-        </div>
+    <div class="contacts-body">
+      <div class="contact-item" ng-click="setSelectedChat($index)"
+           ng-repeat="chatRoom in data.chatRooms | filter: {participant: {name: nameFilter}}">
+        <span class="user-status active"></span>
 
-        <div class="messages-container">
-          <div class="messages-item">
-            <div class="sent-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-1.jpg);"></div>
+        <div class="user-icon" style="background-image: url(assets/img/user-1.jpg);"></div>
 
-                <div class="message-time">
-                  <span>12:47</span>
-                </div>
-              </div>
+        <div class="user-info">
+          <div class="user-name">{{chatRoom.participant.name}}</div>
 
-              <div class="message-text">
-                <p>It was all a dream, I used to read Word Up magazine Salt'n'Pepa and Heavy D up in the limousine.</p>
-              </div>
-            </div>
-          </div>
+          <div class="last-message">Thanks again you have been fucked</div>
 
-          <div class="messages-item">
-            <div class="received-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-2.jpg);"></div>
-
-                <div class="message-time">
-                  <span>12:48</span>
-                </div>
-              </div>
-
-              <div class="message-text">
-                <p>It was all a dream, I used to read Word Up magazine Salt'n'Pepa and Heavy D up in the limousine.</p>
-              </div>
-            </div>
+          <div class="dots">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
 
-          <div class="messages-item">
-            <div class="sent-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-1.jpg);"></div>
-
-                <div class="message-time">
-                  <span>12:47</span>
-                </div>
-              </div>
-
-              <div class="message-text">
-                <p>Yes I did! Every Saturday! Rap Attack, Mr. Magic, Marley Marl. I even let my tape rock 'til my tape popped. Smokin' weed and bamboo, sippin' on private stock.  But this was way back, when I had the red and black lumberjack with the hat to match.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="messages-item">
-            <div class="sent-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-1.jpg);"></div>
-
-                <div class="message-time">
-                  <span>12:47</span>
-                </div>
-              </div>
-
-              <div class="message-text">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam, at.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="messages-item">
-            <div class="received-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-2.jpg);"></div>
-
-                <div class="message-time">
-                  <span>12:48</span>
-                </div>
-              </div>
-
-              <div class="message-text">
-                <p>Haha awesome,  I think I know the album your looking. </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="messages-item">
-            <div class="received-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-2.jpg);"></div>
-
-                <div class="message-time">
-                  <span>12:48</span>
-                </div>
-              </div>
-
-              <div class="message-text">
-                <p>It was all a dream, I used to read Word Up magazine Salt'n'Pepa and Heavy D up in the limousine.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="messages-item">
-            <div class="sent-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-1.jpg);"></div>
-
-                <div class="message-time">
-                  <span>12:47</span>
-                </div>
-              </div>
-
-              <div class="message-text">
-                <p>Yes I did! Every Saturday! Rap Attack, Mr. Magic, Marley Marl. I even let my tape rock 'til my tape popped. Smokin' weed and bamboo, sippin' on private stock.  But this was way back, when I had the red and black lumberjack with the hat to match.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="messages-item">
-            <div class="sent-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-1.jpg);"></div>
-
-                <div class="message-time">
-                  <span>12:47</span>
-                </div>
-              </div>
-
-              <div class="message-text">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Magnam, at.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="messages-item">
-            <div class="received-message">
-              <div class="pic-block">
-                <div class="user-pic" style="background-image: url(assets/img/user-2.jpg);"></div>
-
-                <div class="message-time">
-                  <span>12:48</span>
-                </div>
-              </div>
-
-              <div class="message-text">
-                <p>Haha awesome,  I think I know the album your looking. </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="type-container">
-          <div class="add-file"></div>
-
-          <div class="input-wrap">
-            <textarea class="input-control" placeholder="Type your message..."></textarea>
-          </div>
-
-          <div class="smileys"></div>
-
-          <div class="send-btn">
-            <button></button>
+          <div class="last-seen">
+            <span>10 min</span>
           </div>
         </div>
       </div>
     </div>
-  </body>
+  </div>
+
+  <div class="messages-view">
+    <div class="messages-head">
+
+      <div class="typing-text">
+        <p><span>{{chatRoom.participant.name}}</span> is typing...</p>
+      </div>
+    </div>
+
+    <div class="messages-container">
+      <div class="messages-item" ng-repeat="msg in chatRoom.messages">
+        <div ng-class="(msg.sender.name == data.username) ? 'sent-message' : 'received-message'">
+          <div class="pic-block">
+            <div class="user-pic" style="background-image: url(assets/img/user-1.jpg);"></div>
+
+            <div class="message-time">
+              <span>12:47</span>
+            </div>
+          </div>
+
+          <div class="message-text">
+            <p>{{msg.data}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="type-container">
+      <div class="add-file"></div>
+
+      <div class="input-wrap">
+        <textarea ng-model="message" class="input-control" placeholder="Type your message..."></textarea>
+      </div>
+
+      <div class="smileys"></div>
+
+      <div class="send-btn">
+        <button ng-click="sendMessage()"></button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
 </html>

@@ -2,6 +2,8 @@ angular.module('webChat', ['ui.bootstrap'])
     .controller('ChatController', function ChatController($scope, $uibModal, chat) {
         $scope.data = chat;
         $scope.nameFilter = '';
+        $scope.chatRoom = {};
+        $scope.message = "";
 
         $scope.openModalAddContact = function () {
             var modalInstance = $uibModal.open({
@@ -12,6 +14,18 @@ angular.module('webChat', ['ui.bootstrap'])
                 controller: 'AddContactModalController'
             })
         };
+        $scope.setSelectedChat = function (index) {
+            $scope.chatRoom = chat.chatRooms[index];
+        };
+        $scope.sendMessage = function () {
+            if($scope.message == "") {
+                return;
+            }
+            chat.stompClient.send("/app/message/" + $scope.chatRoom.topic, {}, JSON.stringify({
+                data: $scope.message
+            }));
+            $scope.message = "";
+        }
     })
     .controller('AddContactModalController', function ($scope, $uibModalInstance, chat) {
         $scope.selectedIndex = -1;
@@ -46,17 +60,18 @@ angular.module('webChat', ['ui.bootstrap'])
 
             connect = function () {
                 stompClient.connect({}, function (frame) {
-                    username = frame.headers["user-name"];
-                    stompClient.subscribe('/user/topic/chat-rooms', function (response) {
+                    _data.username = frame.headers["user-name"];
+                    stompClient.subscribe('/user/topic/chat-rooms', function (response) { // TODO Fire event on the backend when a new user added
                         var chatRoomsRaw = JSON.parse(response.body);
                         for (var i = 0; i < chatRoomsRaw.length; i++) {
                             var participants = chatRoomsRaw[i].participants;
                             var room = {
                                 topic: '',
-                                participant: {}
+                                participant: {},
+                                messages: []
                             };
                             for (var j = 0; j < participants.length; j++) {
-                                if (participants[j].name == username) {
+                                if (participants[j].name == _data.username) {
                                     continue;
                                 }
                                 room.participant = participants[j];
@@ -65,6 +80,18 @@ angular.module('webChat', ['ui.bootstrap'])
                             _data.chatRooms.push(room);
                         }
                         $rootScope.$digest();
+                        for (var i = 0; i < _data.chatRooms.length; i++) {
+                            stompClient.subscribe('/topic/' + _data.chatRooms[i].topic, function (response) {
+                                var msg = JSON.parse(response.body);
+                                for (var i = 0; i < _data.chatRooms.length; i++) {
+                                    if(_data.chatRooms[i].topic == msg.chatRoom.topic) {
+                                        _data.chatRooms[i].messages.push(msg);
+                                        break;
+                                    }
+                                }
+                                $rootScope.$digest();
+                            });
+                        }
                     });
                     stompClient.subscribe('/user/topic/found-users', function (response) {
                         _data.foundUsers = JSON.parse(response.body);
@@ -77,7 +104,8 @@ angular.module('webChat', ['ui.bootstrap'])
             _data = {
                 foundUsers: [],
                 stompClient: stompClient,
-                chatRooms: []
+                chatRooms: [],
+                username: ""
             };
         connect();
 
