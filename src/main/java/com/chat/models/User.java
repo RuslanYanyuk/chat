@@ -48,6 +48,7 @@ public class User implements UserDetails {
     public User(User u) {
         this.name = u.getName();
         this.password = u.getPassword();
+        this.id = u.getId();
     }
 
     public Long getId() {

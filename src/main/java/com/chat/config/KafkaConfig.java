@@ -1,7 +1,5 @@
 package com.chat.config;
 
-import com.chat.models.ChatRoom;
-import com.chat.models.Message;
 import com.chat.utils.KafkaAdminUtils;
 import kafka.utils.ZKStringSerializer$;
 import kafka.utils.ZkUtils;
@@ -78,11 +76,8 @@ public class KafkaConfig {
     }
 
     public MessageListener<Long, String> messageListener() {
-        return record -> {
-            Message msg = new Message(record.value());
-            msg.setChatRoom(new ChatRoom(record.topic()));
-            messagingTemplate.convertAndSend(BROKER_PREFIX + "/" + record.topic(), msg);
-        };
+        return record ->
+                messagingTemplate.convertAndSend(BROKER_PREFIX + "/" + record.topic(), record.value());
     }
 
     @Bean
@@ -92,7 +87,7 @@ public class KafkaConfig {
         KafkaMessageListenerContainer<Long, String> container =
                 new KafkaMessageListenerContainer<>(consumerFactory, containerProperties);
         container.setupMessageListener(messageListener());
-        container.setBeanName("templateTests");
+        container.setBeanName("patternContainer");
         container.start();
         return container;
     }

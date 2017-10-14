@@ -1,6 +1,7 @@
 package com.chat.controllers;
 
 import com.chat.exceptions.AccessDeniedException;
+import com.chat.exceptions.MessageDeliveryException;
 import com.chat.models.ChatRoom;
 import com.chat.models.Message;
 import com.chat.models.User;
@@ -30,7 +31,7 @@ public class ChatController {
     UserService userService;
 
     @MessageMapping("/message/{room}")
-    public void sendMessage(Message message, @DestinationVariable String room, Principal principal) throws AccessDeniedException {
+    public void sendMessage(Message message, @DestinationVariable String room, Principal principal) throws AccessDeniedException, MessageDeliveryException {
         message.setChatRoom(new ChatRoom(room));
         message.setSender(new User(principal.getName(), null));
         messageService.sendMessage(message);

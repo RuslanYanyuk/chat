@@ -2,6 +2,7 @@ package com.chat.services;
 
 import com.chat.common.AbstractKafkaTest;
 import com.chat.exceptions.AccessDeniedException;
+import com.chat.exceptions.MessageDeliveryException;
 import com.chat.models.ChatRoom;
 import com.chat.models.User;
 import com.chat.repositories.ChatRoomRepository;
@@ -68,7 +69,7 @@ public class UserServiceTests extends AbstractKafkaTest {
      */
     @Test
     @Ignore
-    public void addChatRoom_ownerAndParticipants_chatRoomCreated() throws AccessDeniedException {
+    public void addChatRoom_ownerAndParticipants_chatRoomCreated() throws AccessDeniedException, MessageDeliveryException {
         User owner = getUser(1);
         User[] participants = getArrayOfUsers(2, 3);
 

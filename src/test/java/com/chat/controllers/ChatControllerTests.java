@@ -78,12 +78,14 @@ public class ChatControllerTests extends AbstractKafkaTest {
 
     @Test
     public void sendMessage_messageToExistingChatRoom_messageDelivered() {
-        Message message = getTestMessage(1, null);
+        Message message = getTestMessage(1, TEST_TOPIC);
 
         subscribe("/" + TEST_TOPIC);
         send("/message/" + TEST_TOPIC, message);
 
         with(response()).assertThat("$.data", is(message.getData()));
+        with(response()).assertThat("$.sender.name", is(message.getSender().getName()));
+        with(response()).assertThat("$.chatRoom.topic", is(message.getChatRoom().getTopic()));
     }
 
     @Test

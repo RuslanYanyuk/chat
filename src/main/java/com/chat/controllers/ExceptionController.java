@@ -1,6 +1,5 @@
 package com.chat.controllers;
 
-import com.chat.exceptions.AccessDeniedException;
 import com.chat.models.ErrorResponse;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -13,9 +12,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 public class ExceptionController {
 
-    @MessageExceptionHandler(AccessDeniedException.class)
+    @MessageExceptionHandler(Exception.class)
     @SendToUser("/topic/errors")
-    public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
+    public ErrorResponse handleAccessDeniedException(Exception e) {
         return new ErrorResponse(e.getMessage());
     }
 }
