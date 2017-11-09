@@ -168,6 +168,17 @@ public class ChatControllerTests extends AbstractKafkaTest {
         with(response()).assertThat("$.[*].id", hasItems(2, 3, 4));
     }
 
+    @Test
+    public void getChatHistory_historyReturned() {
+        subscribeUserTo("/chat-history");
+        for (int i = 0; i < 4; i++) {
+            send("/message/" + TEST_TOPIC, getTestMessage(1, TEST_TOPIC));
+        }
+        send("/get-chat-history/" + TEST_TOPIC, null);
+
+        with(response()).assertThat("$.[*].data", hasSize(4));
+    }
+
     class TestStompSessionHandlerAdapter extends StompSessionHandlerAdapter {
         @Override
         public void afterConnected(StompSession session, StompHeaders connectedHeaders) {

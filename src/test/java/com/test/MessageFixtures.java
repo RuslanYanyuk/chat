@@ -12,7 +12,7 @@ import static com.test.UserFixtures.getUser;
 public class MessageFixtures {
 
     public static Message getTestMessage(int i, String topic) {
-        Message msg = new Message("Test message 1");
+        Message msg = new Message("Test message " + i);
         msg.setSender(getUser(i));
         msg.setChatRoom(new ChatRoom(topic));
         return msg;

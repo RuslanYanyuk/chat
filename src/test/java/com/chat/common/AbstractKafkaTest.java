@@ -55,7 +55,7 @@ public abstract class AbstractKafkaTest extends AbstractTest {
 
         @Bean(initMethod = "before", destroyMethod = "after")
         public KafkaEmbedded kafkaEmbedded() {
-            return new KafkaEmbedded(1, true, TEST_TOPIC);
+            return new KafkaEmbedded(1, true, 1, TEST_TOPIC);
         }
 
         @Override

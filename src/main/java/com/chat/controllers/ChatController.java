@@ -72,4 +72,12 @@ public class ChatController {
     public List<User> addContact(User user, Principal principal) throws AccessDeniedException {
         return userService.addContact(new User(principal.getName(), null), user);
     }
+
+    /**
+     * Send to user at "/user/topic/chat-history"
+     */
+    @MessageMapping("/get-chat-history/{topic}")
+    public void getChatHistory(@DestinationVariable String topic, Principal principal) {
+        messageService.getAllMessages(topic, principal.getName());
+    }
 }

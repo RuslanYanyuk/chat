@@ -16,6 +16,7 @@ angular.module('webChat', ['ui.bootstrap'])
         };
         $scope.setSelectedChat = function (index) {
             $scope.chatRoom = chat.chatRooms[index];
+            chat.stompClient.send("/app/get-chat-history/" + $scope.chatRoom.topic, {});
         };
         $scope.sendMessage = function () {
             if($scope.message == "") {
@@ -96,6 +97,25 @@ angular.module('webChat', ['ui.bootstrap'])
                     stompClient.subscribe('/user/topic/found-users', function (response) {
                         _data.foundUsers = JSON.parse(response.body);
                         $rootScope.$digest();
+                    });
+                    stompClient.subscribe('/user/topic/chat-history', function (response) {
+                        var oldMessages = s = JSON.parse(response.body);
+                        for (var i = 0; i < s.length; i++) {
+                            oldMessages[i] = JSON.parse(s[i]);
+                        }
+                        if (oldMessages.length == 0) {
+                            return;
+                        }
+                        for (var i = 0; i < _data.chatRooms.length; i++) { //TODO handle it better)
+                            if (_data.chatRooms[i].topic == oldMessages[0].chatRoom.topic) {
+                                if (_data.chatRooms[i].messages == undefined ||
+                                    _data.chatRooms[i].messages.length == 0) {
+                                    _data.chatRooms[i].messages = oldMessages;
+                                    $rootScope.$digest();
+                                    return;
+                                }
+                            }
+                        }
                     });
                     stompClient.send("/app/get-chat-rooms", {});
                 });

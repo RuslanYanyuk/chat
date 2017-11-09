@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 
 import static com.test.MessageFixtures.getTestMessage;
+import static com.test.UserFixtures.getUser;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.springframework.kafka.test.hamcrest.KafkaMatchers.hasKey;
@@ -61,5 +62,14 @@ public class MessageServiceTests extends AbstractKafkaTest {
     @Test(expected = AccessDeniedException.class)
     public void sendMessage_senderNotFromChat_exceptionThrown() throws AccessDeniedException, MessageDeliveryException {
         messageService.sendMessage(getTestMessage(4, TEST_TOPIC));
+    }
+
+    @Test
+    public void getAllMessages_topic_messagesReturned() throws AccessDeniedException, MessageDeliveryException {
+        for (int i = 0; i < 4; i++) {
+            messageService.sendMessage(getTestMessage(1, TEST_TOPIC));
+        }
+        messageService.getAllMessages(TEST_TOPIC, getUser(1).getName());
+        //TODO refactor this
     }
 }
